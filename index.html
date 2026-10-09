@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unveiler: Object-Centric Spatial Reasoning for Sequential Manipulation in Clutter</title>
+  <meta name="description" content="A modular framework that separates which object to remove from how to manipulate it, for retrieving occluded targets in clutter.">
+  <meta property="og:title" content="Unveiler: Learning Object-Centric Spatial Reasoning for Sequential Manipulation in Cluttered Environments">
+  <meta property="og:description" content="A modular framework that separates which object to remove from how to manipulate it, for retrieving occluded targets in clutter.">
+  <meta property="og:image" content="static/images/real_external_task1.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1><span class="name">Unveiler</span>: Learning Object-Centric Spatial Reasoning for Sequential Manipulation in Cluttered Environments</h1>
+
+    <div class="authors">
+      <span>Chrisantus Eze<sup>1</sup></span>
+      <span>Ryan C. Julian<sup>2,*</sup></span>
+      <span>Christopher Crick<sup>1</sup></span>
+    </div>
+    <div class="affils">
+      <span><sup>1</sup>Oklahoma State University</span>
+      <span><sup>2</sup>Google DeepMind</span>
+    </div>
+    <div class="affils" style="font-size:0.82rem;margin-top:4px"><sup>*</sup>Work done while at Google DeepMind</div>
+    <div class="venue">Under review</div>
+
+    <div class="links">
+      <span class="btn off">Paper (coming soon)</span>
+      <a class="btn" href="#video">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Video
+      </a>
+      <a class="btn" href="https://github.com/chrisantuseze/object-unveiler">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>Code
+      </a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="tldr">Unveiler separates <em>which</em> object to remove from <em>how</em> to manipulate it: a Spatial Relationship Encoder picks the next object, and an independent Action Decoder executes the removal.</p>
+
+    <figure class="plain">
+      <img src="static/images/real_external_task1.png" alt="Four frames of a Dofbot-Pro removing a yellow block and a green block to reach a covered blue target." loading="lazy">
+      <figcaption>Unveiler on a real robot (Dofbot-Pro), retrieving a covered target (the blue block). The SRE selects the yellow block for removal, then the green block beneath it, and the robot then grasps the exposed blue target. The red block covers nothing and is never selected, so it stays on the table.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="video">
+  <div class="wrap">
+    <h2>Overview</h2>
+    <div class="grid one">
+      <div class="frame">
+        <video controls playsinline preload="metadata" poster="static/videos/overview.jpg">
+          <source src="static/videos/overview.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Abstract</h2>
+    <p class="prose">Sequential manipulation in clutter requires selecting which objects to remove and determining how to manipulate them. Learning both decisions jointly can complicate training and make failures difficult to diagnose. We present Unveiler, a modular framework that separates scene reasoning and object selection from action execution through a discrete object-index interface. Its Spatial Relationship Encoder (SRE) selects the best object to grasp, while a separate Action Decoder generates orientation-discretized push-grasp actions. The SRE is trained in two stages: imitation learning from heuristic demonstrations, followed by search-based policy improvement using simulated object removals. This training procedure requires no real-robot training data and allows the SRE to be paired with a different execution policy. We evaluate Unveiler in PyBullet simulation and on a physical Dofbot-Pro. In real-robot experiments, it retrieves two occluded targets in the prescribed order in 90% of scenes, compared with 20&ndash;30% for the heuristic, GPT-4o, and the imitation-only variant. In PyBullet, Unveiler achieves the highest task-completion rate across all six clutter-density and occlusion conditions, reaching 90.0% under full occlusion with 6&ndash;9 objects, compared with 67.5% for the heuristic and 60.0% for ThinkGrasp. These results demonstrate the potential of modular, object-centric spatial reasoning for sequential manipulation in clutter.</p>
+
+    <div class="stats">
+      <div class="stat"><b>90%</b><span>real-robot success retrieving two occluded targets in order (baselines: 20&ndash;30%)</span></div>
+      <div class="stat"><b>6 / 6</b><span>simulated clutter and occlusion conditions with the highest task completion</span></div>
+      <div class="stat"><b>0</b><span>real-robot training data: the SRE is trained entirely in simulation</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Method</h2>
+    <p class="prose">The <b>Spatial Relationship Encoder (SRE)</b> reasons over object-centric features of the scene and outputs the index of the next object to remove. An independent <b>Action Decoder</b> turns that index into an orientation-discretized push-grasp action. Because the two modules communicate only through a discrete object index, the selection policy can be trained in simulation and deployed with a different manipulation system.</p>
+
+    <figure>
+      <img src="static/images/unveiler.png" alt="Unveiler system architecture with the Spatial Relationship Encoder and the Action Decoder." loading="lazy">
+      <figcaption><b>Unveiler system architecture.</b> The SRE and the Action Decoder are trained independently and connected by a discrete object index.</figcaption>
+    </figure>
+
+    <p class="prose">The SRE is trained in two stages: imitation learning from heuristic demonstrations, followed by search-based policy improvement using simulated object removals. On the real robot, the SRE is paired with the robot's own pick-and-place primitive.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Real-World Execution</h2>
+    <p class="lead prose">A Dofbot-Pro retrieving covered blocks. Magenta outline: block selected for removal. Green outline: target being grasped. <i>p</i> is the SRE's probability for its selection. Footage is sped up 4&ndash;5&times;.</p>
+
+    <div class="grid one">
+      <figure class="clip">
+        <div class="frame">
+          <video controls muted loop playsinline preload="none" poster="static/videos/task2_unveiler.jpg">
+            <source src="static/videos/task2_unveiler.mp4" type="video/mp4">
+          </video>
+        </div>
+        <h4><span class="tag ok">Unveiler</span>Task 2: retrieve red, then green</h4>
+        <p>Each target lies under its own block. Unveiler uncovers and grasps red, then uncovers and grasps green.</p>
+      </figure>
+    </div>
+
+    <div class="grid">
+      <figure class="clip">
+        <div class="frame">
+          <video controls muted loop playsinline preload="none" poster="static/videos/task2_compare.jpg">
+            <source src="static/videos/task2_compare.mp4" type="video/mp4">
+          </video>
+        </div>
+        <h4>Task 2: retrieve green, then red</h4>
+        <p>One blue block lies across both targets. Unveiler removes it first; GPT-4o reaches for the green target while the blue block still covers it.</p>
+      </figure>
+
+      <figure class="clip">
+        <div class="frame">
+          <video controls muted loop playsinline preload="none" poster="static/videos/task1_c2_compare.jpg">
+            <source src="static/videos/task1_c2_compare.mp4" type="video/mp4">
+          </video>
+        </div>
+        <h4>Task 1: retrieve blue under two blocks</h4>
+        <p>Unveiler removes yellow, then green, then grasps the target. GPT-4o removes red, which covers nothing, then selects the still-covered target.</p>
+      </figure>
+    </div>
+
+    <div class="grid one">
+      <figure class="clip">
+        <div class="frame">
+          <video controls muted loop playsinline preload="none" poster="static/videos/task1_f_compare.jpg">
+            <source src="static/videos/task1_f_compare.mp4" type="video/mp4">
+          </video>
+        </div>
+        <h4>Task 1: target already free</h4>
+        <p>Nothing needs to be removed, and both Unveiler and GPT-4o grasp the target directly.</p>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Results</h2>
+
+    <h3 class="prose">Real robot</h3>
+    <div class="table-scroll">
+      <table>
+        <caption>Real-robot results on the Dofbot-Pro, 10 scenes per task. Task 1: one target. Task 2: two targets, in order. Sel.: correct selections (%).</caption>
+        <thead>
+          <tr class="group"><th></th><th colspan="3">Task 1</th><th colspan="3">Task 2</th></tr>
+          <tr><th>Method</th><th>Success (%)</th><th>Sel. (%)</th><th>Steps</th><th>Success (%)</th><th>Sel. (%)</th><th>Steps</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPT-4o</td><td>30</td><td>45.0</td><td>2.0</td><td>20</td><td>55.6</td><td>2.7</td></tr>
+          <tr><td>Heuristic</td><td>40</td><td>70.6</td><td>1.7</td><td>20</td><td>71.4</td><td>2.1</td></tr>
+          <tr><td>Imitation only</td><td>40</td><td>69.2</td><td>2.6</td><td>30</td><td>75.0</td><td>2.8</td></tr>
+          <tr class="ours"><td>Unveiler (Ours)</td><td>70</td><td>85.7</td><td>2.1</td><td>90</td><td>100</td><td>3.4</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure>
+      <img src="static/images/real_external_comparison.png" alt="Two rows of frames comparing Unveiler and GPT-4o on the same scene." loading="lazy">
+      <figcaption>Top: Unveiler removes the blue block that lies across both targets, then grasps green and red in order. Bottom: in this run GPT-4o reaches for the green target while the blue block still covers it, and the target is not retrieved.</figcaption>
+    </figure>
+
+    <h3 class="prose">Simulation</h3>
+    <p class="prose">In PyBullet, we vary the clutter density (number of objects) and whether the target is partially or fully occluded.</p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Task completion (%, higher is better) across clutter densities and occlusion levels. &ldquo;&mdash;&rdquo;: not reported.</caption>
+        <thead>
+          <tr class="group"><th></th><th colspan="2">2&ndash;6 objects</th><th colspan="2">6&ndash;9 objects</th><th colspan="2">9&ndash;12 objects</th></tr>
+          <tr><th>Method</th><th>Partial</th><th>Full</th><th>Partial</th><th>Full</th><th>Partial</th><th>Full</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPT-4o</td><td>86.0</td><td>66.7</td><td>80.0</td><td>60.0</td><td>66.7</td><td>26.7</td></tr>
+          <tr><td>CLIP-Grounding</td><td>80.5</td><td>60.3</td><td>67.2</td><td>66.7</td><td>53.0</td><td>20.0</td></tr>
+          <tr><td>VILG</td><td>75.0</td><td>50.0</td><td>80.0</td><td>40.0</td><td>46.7</td><td>33.3</td></tr>
+          <tr><td>ThinkGrasp</td><td>73.3</td><td>53.3</td><td>66.7</td><td>60.0</td><td>46.7</td><td>33.3</td></tr>
+          <tr><td>PPG</td><td>40.6</td><td>50.3</td><td>7.5</td><td>4.4</td><td>4.4</td><td>&mdash;</td></tr>
+          <tr><td>Heuristic</td><td>87.3</td><td>67.5</td><td>67.5</td><td>47.8</td><td>50.0</td><td>20.0</td></tr>
+          <tr class="ours"><td>Unveiler (Ours)</td><td>96.1</td><td>89.3</td><td>97.6</td><td>90.0</td><td>92.6</td><td>53.8</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Average planning steps (lower is better).</caption>
+        <thead>
+          <tr class="group"><th></th><th colspan="2">2&ndash;6 objects</th><th colspan="2">6&ndash;9 objects</th><th colspan="2">9&ndash;12 objects</th></tr>
+          <tr><th>Method</th><th>Partial</th><th>Full</th><th>Partial</th><th>Full</th><th>Partial</th><th>Full</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPT-4o</td><td>1.50</td><td>2.50</td><td>1.81</td><td>4.22</td><td>3.10</td><td class="best">3.00</td></tr>
+          <tr><td>CLIP-Grounding</td><td>1.67</td><td>2.11</td><td>3.10</td><td>4.20</td><td>4.38</td><td>4.67</td></tr>
+          <tr><td>VILG</td><td>3.00</td><td>2.86</td><td>3.17</td><td>3.33</td><td class="best">2.86</td><td>3.40</td></tr>
+          <tr><td>ThinkGrasp</td><td>3.00</td><td>2.25</td><td>3.29</td><td>3.78</td><td>3.42</td><td>3.56</td></tr>
+          <tr><td>PPG</td><td>4.42</td><td>4.27</td><td>6.00</td><td class="best">3.00</td><td>4.00</td><td>&mdash;</td></tr>
+          <tr><td>Heuristic</td><td>2.35</td><td>2.30</td><td>2.55</td><td>3.43</td><td>3.40</td><td>3.17</td></tr>
+          <tr class="ours"><td>Unveiler (Ours)</td><td>1.32</td><td>1.87</td><td>1.43</td><td>3.31</td><td>2.86</td><td>3.71</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Evaluation Scenes</h2>
+    <figure>
+      <img src="static/images/real_scenes.png" alt="Real-robot evaluation scenes." loading="lazy">
+      <figcaption>Evaluation scenes. Top: the layout rendered in the digital twin, from the arm camera. Bottom: the same layout built on the table. In Task 1 the target is covered by one block (first column), by two (second), or free (third); in Task 2 each of two targets is covered (fourth).</figcaption>
+    </figure>
+    <figure>
+      <img src="static/images/real_probabilities.png" alt="Selection probabilities of the SRE on real frames." loading="lazy">
+      <figcaption>Selection probabilities of the SRE on real frames from Task 1, for every segmented object. Green: the target's outline from the reference frame taken before it was covered. Magenta: the selected object.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Citation</h2>
+    <pre><code>@misc{eze2026unveiler,
+  title  = {Learning Object-Centric Spatial Reasoning for Sequential
+            Manipulation in Cluttered Environments},
+  author = {Eze, Chrisantus and Julian, Ryan C. and Crick, Christopher},
+  year   = {2026},
+  note   = {Under review}
+}</code></pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Unveiler &copy; 2026 &middot; Oklahoma State University</div>
+</footer>
+
+</body>
+</html>
